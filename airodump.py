@@ -6,7 +6,7 @@
 # http://www.aircrack-ng.org/doku.php?id=airodump-ng
 #
 
-import os,sys,time, traceback, pexpect, subprocess, fcntl, termios
+import os,sys,time, traceback, pexpect
 
 DEBUG=True
 
