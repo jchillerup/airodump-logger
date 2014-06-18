@@ -16,30 +16,30 @@ import socket
 DEVID=''.join(c for c in socket.gethostname() if c.isdigit())
 
 def log_client_appeared(k, l):
-#	print "Appeared - ",k["client"]
-	if l:
-		try:
-			l.info("%s", DEVID+" - Appeared - "+k["client"])
-		except:
-			pass
+#   print "Appeared - ",k["client"]
+    if l:
+        try:
+            l.info("%s", DEVID+" - Appeared - "+k["client"])
+        except:
+            pass
 
 def log_client_disappeared(k, l):
-#	print "Disappeared - ",k["client"]
-	if l:
-		try:
-			l.info("%s", DEVID+" - Disappeared - "+k["client"])
-		except:
-			pass
+#   print "Disappeared - ",k["client"]
+    if l:
+        try:
+            l.info("%s", DEVID+" - Disappeared - "+k["client"])
+        except:
+            pass
 
 def log_update(clients, l):
-	if l:
-		for k in clients.keys():
-			v = clients[k]	
-			try:
-				l.info("%s", DEVID+" - "+v["client"]+" - "+str(abs(int(v["pwr"]))))
-			except:
-				pass
-	
+    if l:
+        for k in clients.keys():
+            v = clients[k]  
+            try:
+                l.info("%s", DEVID+" - "+v["client"]+" - "+str(abs(int(v["pwr"]))))
+            except:
+                pass
+    
 WORKDIR = "/"
 UMASK = 0
 # The standard I/O file descriptors are redirected to /dev/null by default.
@@ -63,7 +63,7 @@ def createDaemon():
    except OSError, e:
       raise Exception, "%s [%d]" % (e.strerror, e.errno)
 
-   if (pid == 0):	# The first child.
+   if (pid == 0):   # The first child.
       # To become the session leader of this new session and the process group
       # leader of the new process group, we call os.setsid().  The process is
       # also guaranteed not to have a controlling terminal.
@@ -107,11 +107,11 @@ def createDaemon():
          # based systems).  This second fork guarantees that the child is no
          # longer a session leader, preventing the daemon from ever acquiring
          # a controlling terminal.
-         pid = os.fork()	# Fork a second child.
+         pid = os.fork()    # Fork a second child.
       except OSError, e:
          raise Exception, "%s [%d]" % (e.strerror, e.errno)
 
-      if (pid == 0):	# The second child.
+      if (pid == 0):    # The second child.
          # Since the current working directory may be a mounted filesystem, we
          # avoid the issue of not being able to unmount the filesystem at
          # shutdown time by changing it to the root directory.
@@ -121,7 +121,7 @@ def createDaemon():
          os.umask(UMASK)
       else:
          # exit() or _exit()?  See below.
-         os._exit(0)	# Exit parent (the first child) of the second child.
+         os._exit(0)    # Exit parent (the first child) of the second child.
    else:
       # exit() or _exit()?
       # _exit is like exit(), but it doesn't call any functions registered
@@ -130,7 +130,7 @@ def createDaemon():
       # streams to be flushed twice and any temporary files may be unexpectedly
       # removed.  It's therefore recommended that child branches of a fork()
       # and the parent branch(es) of a daemon use _exit().
-      os._exit(0)	# Exit parent of the first child.
+      os._exit(0)   # Exit parent of the first child.
 
    # Close all open file descriptors.  This prevents the child from keeping
    # open any file descriptors inherited from the parent.  There is a variety
@@ -158,7 +158,7 @@ def createDaemon():
    # that can be opened by this process.  If there is not limit on the
    # resource, use the default value.
    #
-   import resource		# Resource usage information.
+   import resource      # Resource usage information.
    maxfd = resource.getrlimit(resource.RLIMIT_NOFILE)[1]
    if (maxfd == resource.RLIM_INFINITY):
       maxfd = MAXFD
@@ -167,7 +167,7 @@ def createDaemon():
    for fd in range(0, maxfd):
       try:
          os.close(fd)
-      except OSError:	# ERROR, fd wasn't open to begin with (ignored)
+      except OSError:   # ERROR, fd wasn't open to begin with (ignored)
          pass
 
    # Redirect the standard I/O file descriptors to the specified file.  Since
@@ -177,11 +177,11 @@ def createDaemon():
 
    # This call to open is guaranteed to return the lowest file descriptor,
    # which will be 0 (stdin), since it was closed above.
-   os.open(REDIRECT_TO, os.O_RDWR)	# standard input (0)
+   os.open(REDIRECT_TO, os.O_RDWR)  # standard input (0)
 
    # Duplicate standard input to standard output and standard error.
-   os.dup2(0, 1)			# standard output (1)
-   os.dup2(0, 2)			# standard error (2)
+   os.dup2(0, 1)            # standard output (1)
+   os.dup2(0, 2)            # standard error (2)
 
    return(0)
 
@@ -190,57 +190,58 @@ def createDaemon():
 
 if __name__ == "__main__":
 
-	#retCode = createDaemon()
+    #retCode = createDaemon()
 
-	# Create logging dir
-	if not os.path.isdir(LOG_PATH):
-		os.mkdir(LOG_PATH)
+    # Create logging dir
+    if not os.path.isdir(LOG_PATH):
+        os.mkdir(LOG_PATH)
 
-	# Setup logger(s)
-	update_logger = logging.getLogger('update')
-	hdlr = logging.FileHandler(LOG_PATH+'updates.log')
-	formatter = logging.Formatter('%(asctime)s - %(message)s', "%s")
-	hdlr.setFormatter(formatter)
-	update_logger.addHandler(hdlr)
-	update_logger.setLevel(logging.INFO)
+    # Setup logger(s)
+    update_logger = logging.getLogger('update')
+    hdlr = logging.FileHandler(LOG_PATH+'updates.log')
+    formatter = logging.Formatter('%(asctime)s - %(message)s', "%s")
+    hdlr.setFormatter(formatter)
+    update_logger.addHandler(hdlr)
+    update_logger.setLevel(logging.INFO)
 
-	changes_logger = logging.getLogger('changes')
-	hdlr2 = logging.FileHandler(LOG_PATH+'changes.log')
-	hdlr2.setFormatter(formatter)
-	changes_logger.addHandler(hdlr2)
-	changes_logger.setLevel(logging.INFO)
+    changes_logger = logging.getLogger('changes')
+    hdlr2 = logging.FileHandler(LOG_PATH+'changes.log')
+    hdlr2.setFormatter(formatter)
+    changes_logger.addHandler(hdlr2)
+    changes_logger.setLevel(logging.INFO)
 
-	# Start the airodump-ng processor
-	ad = airodump.AirodumpProcessor()
-	ad.start()
+    # Start the airodump-ng processor
+    ad = airodump.AirodumpProcessor()
+    ad.start()
 
-	prev_clients = {}
+    prev_clients = {}
 
-	while 1:
-		try:
-			[aps, clients] = ad.process()
-			if clients:
-				# Trigger logging for disappearing clients
-				for k in prev_clients.keys():
-					if not clients.has_key(k):
-						log_client_disappeared(prev_clients[k], changes_logger)
+    while 1:
+        try:
+            [aps, clients] = ad.process()
+            print clients
+            if clients:
+                # Trigger logging for disappearing clients
+                for k in prev_clients.keys():
+                    if not clients.has_key(k):
+                        log_client_disappeared(prev_clients[k], changes_logger)
 
-				# Trigger logging for appearing clients
-				for k in clients.keys():
-					if not prev_clients.has_key(k):
-						log_client_appeared(clients[k], changes_logger)	
+                # Trigger logging for appearing clients
+                for k in clients.keys():
+                    if not prev_clients.has_key(k):
+                        log_client_appeared(clients[k], changes_logger) 
 
-				# Trigger logging for updates
-				log_update(clients, update_logger)
+                # Trigger logging for updates
+                log_update(clients, update_logger)
 
-				# TODO: Trigger logging for APs
+                # TODO: Trigger logging for APs
 
-				# Save the current state
-				prev_clients = clients
-				time.sleep(0.99)
-		except:
-			pass
+                # Save the current state
+                prev_clients = clients
+                time.sleep(0.99)
+        except:
+            pass
 
-	# Stop the dumping
-	ad.stop()
+    # Stop the dumping
+    ad.stop()
 

@@ -13,12 +13,7 @@ DEBUG=True
 class AirodumpProcessor:
     # Command to laucnh airodump-ng with:
     CMD="airodump-ng --update 1 --berlin 20 mon0"
-
     screen = None
-    ap_list_on = 0
-    client_list_on = 0
-    ap_list = {}
-    client_list = {}
 
     def __init__(self):
         pass
@@ -34,6 +29,9 @@ class AirodumpProcessor:
     def process(self):
         if not self.screen:
             self.start()
+        
+        ap_list = {}
+        client_list = {}
 
         lines = []
 
@@ -84,17 +82,17 @@ class AirodumpProcessor:
                 v = line.split()
 
                 CLIENT = v[1]
-                if not self.client_list.has_key(CLIENT):
-                    self.client_list[CLIENT] = {}
+                if not client_list.has_key(CLIENT):
+                   client_list[CLIENT] = {}
+                
+                client_list[CLIENT]["ap"]      = v[0]
+                client_list[CLIENT]["client"]  = v[1]
+                client_list[CLIENT]["pwr"]     = v[2]
+                client_list[CLIENT]["rate"]    = v[3]
+                client_list[CLIENT]["lost"]    = v[4]
+                client_list[CLIENT]["packets"] = v[5]
 
-                self.client_list[CLIENT]["ap"]      = CLIENT
-                self.client_list[CLIENT]["client"]  = v[1]
-                self.client_list[CLIENT]["pwr"]     = v[2]
-                self.client_list[CLIENT]["rate"]    = v[3]
-                self.client_list[CLIENT]["lost"]    = v[4]
-                self.client_list[CLIENT]["packets"] = v[5]
-
-        return [self.ap_list, self.client_list]
+        return [ap_list, client_list]
 
     def stop(self):
         self.screen.terminate()
