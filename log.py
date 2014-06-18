@@ -219,7 +219,6 @@ if __name__ == "__main__":
     while 1:
         try:
             [aps, clients] = ad.process()
-            print clients
             if clients:
                 # Trigger logging for disappearing clients
                 for k in prev_clients.keys():
